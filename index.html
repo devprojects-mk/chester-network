@@ -13,7 +13,7 @@
   --bg:#f5f6f7; --panel:#fcfcfb; --ink:#14181d; --ink-2:#4a5058; --ink-3:#6f757d; --rule:#d9dde1; --rule-2:#e8ebee;
   --sel:#1d2733; --sel-ink:#ffffff; --hl:#14181d;
   --sci:#2a78d6; --left:#1baf7a; --sov:#eb6834; --usg:#7d8189;
-  --edge:#9aa1a9; --edge-neg:#c3c8cd;
+  --edge:#9aa1a9; --edge-neg:#c3c8cd; --neg:#b3261e;
   --f-display:"Source Serif 4", Georgia, "Times New Roman", serif;
   --f-body:"Public Sans", "Helvetica Neue", Arial, sans-serif;
   --f-mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
@@ -21,11 +21,11 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#121417; --panel:#1a1a19; --ink:#f2f3f4; --ink-2:#c3c6ca; --ink-3:#979ca3; --rule:#33383e; --rule-2:#262a2f;
   --sel:#e6e9ec; --sel-ink:#121417; --hl:#ffffff;
-  --sci:#3987e5; --left:#199e70; --sov:#d95926; --usg:#9ba0a8; --edge:#5d646c; --edge-neg:#40464d; color-scheme:dark}}
+  --sci:#3987e5; --left:#199e70; --sov:#d95926; --usg:#9ba0a8; --edge:#5d646c; --edge-neg:#40464d; --neg:#ff8fa3; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#121417; --panel:#1a1a19; --ink:#f2f3f4; --ink-2:#c3c6ca; --ink-3:#979ca3; --rule:#33383e; --rule-2:#262a2f;
   --sel:#e6e9ec; --sel-ink:#121417; --hl:#ffffff;
-  --sci:#3987e5; --left:#199e70; --sov:#d95926; --usg:#9ba0a8; --edge:#5d646c; --edge-neg:#40464d; color-scheme:dark}
+  --sci:#3987e5; --left:#199e70; --sov:#d95926; --usg:#9ba0a8; --edge:#5d646c; --edge-neg:#40464d; --neg:#ff8fa3; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;padding-inline:20px;padding-block:28px 64px}
 .wrap{max-width:1180px;margin:0 auto;display:grid;gap:40px}
@@ -70,7 +70,7 @@ select{font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--rule);
 .sw{width:11px;height:11px;border-radius:50%;display:inline-block}
 .sw.sq{border-radius:2px}
 .ln{width:26px;height:0;border-top:2px solid var(--ink-2);display:inline-block}
-.ln.b{border-top-style:dashed}.ln.c{border-top:2px dotted var(--ink)}.ln.neg{border-top-color:var(--edge-neg)}
+.ln.b{border-top-style:dashed}.ln.c{border-top:2px dotted var(--ink)}.ln.neg{border-top-color:var(--neg);position:relative}.ln.neg::after{content:"";position:absolute;left:11px;top:-6px;width:2px;height:10px;background:var(--neg)}
 .inspect{padding:16px;display:grid;gap:12px;align-content:start;min-width:0}
 .inspect .grp{font-family:var(--f-mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;display:flex;align-items:center;gap:6px;color:var(--ink-3)}
 .inspect h3{font-family:var(--f-display);font-size:22px;font-weight:650}
@@ -222,7 +222,7 @@ ul.plain{margin:0;padding-left:18px;display:grid;gap:6px;color:var(--ink-2);max-
         <span><i class="ln"></i>Documented</span>
         <span><i class="ln b"></i>Testimony</span>
         <span><i class="ln c"></i>Soviet claim only</span>
-        <span><i class="ln neg"></i>Adversarial</span>
+        <span><svg width="30" height="12" aria-hidden="true" style="overflow:visible"><line x1="1" y1="6" x2="21" y2="6" stroke="var(--neg)" stroke-width="2"/><line x1="11" y1="1" x2="11" y2="11" stroke="var(--neg)" stroke-width="2" stroke-linecap="round"/><path d="M20 1.5 L29 6 L20 10.5 Z" fill="var(--neg)"/></svg>Adversarial or surveillance (arrow points at the person watched or targeted)</span>
       </div>
     </div>
     <aside class="inspect" id="inspect" aria-live="polite"></aside>
@@ -372,6 +372,12 @@ for(let i=0;i<500;i++) sim.tick();
 nodes.forEach(n=>{n.x=Math.max(40,Math.min(W-60,n.x)); n.y=Math.max(30,Math.min(H-30,n.y));});
 
 const svg=d3.select("#graph");
+svg.append("defs").append("marker").attr("id","negArrow").attr("viewBox","0 0 10 10").attr("refX",9).attr("refY",5)
+  .attr("markerWidth",9).attr("markerHeight",9).attr("markerUnits","userSpaceOnUse").attr("orient","auto")
+  .append("path").attr("d","M0 0 L10 5 L0 10 Z").style("fill","var(--neg)");
+/* who acts on whom: surveillance runs source→target; for hostile ties, the actor is listed where the data order differs */
+const ACTOR={"JRO~EOL":["EOL","JRO"],"JRO~ET":["ET","JRO"],"Strauss~JRO":["Strauss","JRO"],"Robb~JRO":["Robb","JRO"],"Mironov~Zarubin":["Mironov","Zarubin"]};
+function arrowOf(e){ if(e.type==="surveillance") return [e.s,e.t]; if(e.type==="adversarial") return ACTOR[e.s+"~"+e.t]||null; return null; }
 const gE=svg.append("g"), gP=svg.append("g"), gN=svg.append("g");
 const tip=document.getElementById("tip");
 function showTip(ev,html,cls){tip.className=cls||"";tip.innerHTML=html;tip.hidden=false;
@@ -394,10 +400,13 @@ function bioCard(id,full){const n=byId[id], b=BIO[id]||[n.note,[],[]], im=IMG[id
 function hideTip(){tip.hidden=true}
 const edgeSel=gE.selectAll("g").data(edges).join("g");
 edgeSel.append("line").attr("class","vis");
+edgeSel.filter(e=>e.sign<0).append("line").attr("class","tick");
 edgeSel.append("line").attr("class","hit").attr("stroke","transparent").attr("stroke-width",10)
   .on("mousemove",(ev,e)=>showTip(ev,`<b>${byId[e.s].label} — ${byId[e.t].label}</b><br>${e.type} · ${TIERN[e.tier]} · ${e.per.split("").map(p=>PERN[p]).join(", ")}<br><span style="color:var(--ink-3)">${e.ev}</span>`))
   .on("mouseleave",hideTip);
-edgeSel.selectAll("line").attr("x1",e=>byId[e.s].x).attr("y1",e=>byId[e.s].y).attr("x2",e=>byId[e.t].x).attr("y2",e=>byId[e.t].y);
+edgeSel.selectAll("line.vis,line.hit").attr("x1",e=>byId[e.s].x).attr("y1",e=>byId[e.s].y).attr("x2",e=>byId[e.t].x).attr("y2",e=>byId[e.t].y);
+edgeSel.select("line.tick").each(function(e){const a=byId[e.s],b=byId[e.t],mx=(a.x+b.x)/2,my=(a.y+b.y)/2,dx=b.x-a.x,dy=b.y-a.y,L=Math.hypot(dx,dy)||1,px=-dy/L*5,py=dx/L*5;
+  d3.select(this).attr("x1",mx-px).attr("y1",my-py).attr("x2",mx+px).attr("y2",my+py).attr("stroke","var(--neg)").attr("stroke-width",2).attr("stroke-linecap","round");});
 const nodeSel=gN.selectAll("g").data(nodes).join("g").attr("class","node").attr("tabindex",0).attr("role","button")
   .attr("aria-label",d=>d.label).attr("transform",d=>`translate(${d.x},${d.y})`)
   .on("click",(ev,d)=>{st.sel=d.id;render()}).on("keydown",(ev,d)=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();st.sel=d.id;render()}})
@@ -413,9 +422,13 @@ function render(){
   const vals=Object.values(m).map(x=>x[st.metric]||0); const mx=Math.max(...vals)||1;
   const r=id=>m[id]?5+17*Math.sqrt((m[id][st.metric]||0)/mx):4;
   edgeSel.attr("display",e=>actSet.has(e.i)&&(st.neg||e.sign>0)?null:"none");
-  edgeSel.select(".vis").attr("stroke",e=>e.tier==="C"?"var(--ink)":(e.sign<0?"var(--edge-neg)":"var(--edge)"))
-    .attr("stroke-width",e=>e.tier==="C"?2:1.3).attr("stroke-dasharray",e=>e.tier==="B"?"5 3":e.tier==="C"?"1.5 3.5":null)
+  edgeSel.select(".vis").attr("stroke",e=>e.tier==="C"?"var(--ink)":(e.sign<0?"var(--neg)":"var(--edge)"))
+    .attr("stroke-width",e=>e.tier==="C"?2:(e.sign<0?1.6:1.3)).attr("stroke-opacity",e=>e.sign<0?.8:1).attr("stroke-dasharray",e=>e.tier==="B"?"5 3":e.tier==="C"?"1.5 3.5":null)
     .attr("stroke-linecap",e=>e.tier==="C"?"round":"butt");
+  edgeSel.select(".vis").each(function(e){const d=arrowOf(e); const L=d3.select(this);
+    if(!d){L.attr("x1",byId[e.s].x).attr("y1",byId[e.s].y).attr("x2",byId[e.t].x).attr("y2",byId[e.t].y).attr("marker-end",null);return;}
+    const a=byId[d[0]],b=byId[d[1]],dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy)||1,off=r(b.id)+3;
+    L.attr("x1",a.x).attr("y1",a.y).attr("x2",b.x-dx/len*off).attr("y2",b.y-dy/len*off).attr("marker-end","url(#negArrow)");});
   const selTies=new Set(act.filter(e=>e.s===st.sel||e.t===st.sel).flatMap(e=>[e.s,e.t]));
   nodeSel.attr("display",d=>m[d.id]?null:"none").classed("sel",d=>d.id===st.sel);
   nodeSel.select("circle").attr("r",d=>r(d.id)).attr("fill",d=>GVAR[d.group]);
@@ -524,7 +537,7 @@ document.getElementById("scopeCount").textContent=`${nodes.length} actors · ${e
   T.forEach(tr=>{const g=s.append("g").attr("transform",`translate(${tr.ox},0)`);
     g.append("text").attr("class","lbl").attr("x",0).attr("y",18).style("font-weight",600).text(tr.t);
     tr.e.forEach(([a,b,sg])=>{const [x1,y1]=P[a],[x2,y2]=P[b]; const none=sg.length>1;
-      g.append("line").attr("x1",x1).attr("y1",y1).attr("x2",x2).attr("y2",y2).attr("stroke",sg==="−"?"var(--ink-3)":"var(--ink)").attr("stroke-width",none?1:2.2).attr("stroke-dasharray",none?"3 4":(sg==="−"?"7 4":null));
+      g.append("line").attr("x1",x1).attr("y1",y1).attr("x2",x2).attr("y2",y2).attr("stroke",sg==="−"?"var(--neg)":"var(--ink)").attr("stroke-width",none?1:2.2).attr("stroke-dasharray",none?"3 4":(sg==="−"?"7 4":null));
       const mx=(x1+x2)/2, my=(y1+y2)/2+(y1===y2?16:0), dx=(a==="JRO"&&b==="EOL")?-16:(a==="JRO"&&b==="ET")?16:0;
       g.append("text").attr("x",mx+dx).attr("y",my+4).attr("text-anchor","middle").style("font-size",none?"11px":"16px").style("fill","var(--ink)").text(sg);});
     Object.entries(P).forEach(([id,[x,y]])=>{g.append("circle").attr("cx",x).attr("cy",y).attr("r",13).attr("fill","var(--sci)").attr("stroke","var(--panel)").attr("stroke-width",2);
