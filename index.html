@@ -42,12 +42,12 @@ header{display:grid;gap:14px}
 .meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-family:var(--f-mono);font-size:12px;color:var(--ink-3)}
 section{display:grid;gap:16px}
 .qs{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;max-width:860px}
-.q{border:1px solid var(--rule);background:var(--panel);border-radius:6px;padding:16px 18px;display:grid;gap:6px;align-content:start;min-width:0}
-.q .qn{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
-.q h3{font-family:var(--f-display);font-size:21px;font-weight:650}
-.q p{font-size:14px;color:var(--ink-2)}
-.q .ans{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;font-size:14px}
-.q .ans b{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;border:1px solid var(--ink-2);border-radius:999px;padding:0 9px;color:var(--ink)}
+.hq{border:1px solid var(--rule);background:var(--panel);border-radius:6px;padding:16px 18px;display:grid;gap:6px;align-content:start;min-width:0}
+.hq .qn{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.hq h3{font-family:var(--f-display);font-size:21px;font-weight:650}
+.hq p{font-size:14px;color:var(--ink-2)}
+.hq .ans{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;font-size:14px}
+.hq .ans b{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;border:1px solid var(--ink-2);border-radius:999px;padding:0 9px;color:var(--ink)}
 .bluf{border:1px solid var(--rule);background:var(--panel);border-radius:6px;padding:20px 22px;display:grid;gap:8px;max-width:860px}
 .bluf strong{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;color:var(--ink-3);font-weight:500}
 .bluf p{font-size:17px;max-width:74ch}
@@ -136,11 +136,14 @@ th{position:sticky;top:0;background:var(--panel);font-family:var(--f-mono);font-
 th button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0;letter-spacing:inherit;text-transform:inherit}
 th button[aria-sort]{color:var(--ink)}
 td.num{font-family:var(--f-mono);font-size:12.5px}
-tr.sel td{background:var(--rule-2)}
+tr.sel td{background:var(--rule-2);box-shadow:inset 0 1px 0 var(--ink-3),inset 0 -1px 0 var(--ink-3)}
+tr.sel td:first-child{font-weight:600}
+.tomap{font:inherit;font-family:var(--f-mono);font-size:11px;margin-left:6px;padding:1px 7px;border:1px solid var(--ink-3);border-radius:999px;background:var(--panel);color:var(--ink);cursor:pointer}
+.tomap:hover,.tomap:focus-visible{background:var(--sel);color:var(--sel-ink);outline:none}
 tbody tr{cursor:pointer}
 /* method */
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px 28px}
-.metrics div{display:grid;gap:4px}
+.metrics div{display:grid;gap:4px;align-content:start}
 .metrics h3{font-size:15px}
 .metrics p{font-size:14px;color:var(--ink-2)}
 .metrics .q{font-family:var(--f-mono);font-size:11.5px;color:var(--ink-3)}
@@ -177,14 +180,14 @@ ul.plain{margin:0;padding-left:18px;display:grid;gap:6px;color:var(--ink-2);max-
 <section>
   <h2>Herken's two questions</h2>
   <div class="qs">
-    <div class="q">
+    <div class="hq">
       <span class="qn">Question 1 · lecture slide 49</span>
       <h3>Was Robert Oppenheimer a "closet Communist"?</h3>
       <p>Not whether he sympathized with the left, which he admitted, but whether he secretly belonged to the Communist Party's closed faculty unit at Berkeley (c. 1937/38–1942) and then denied it under oath.</p>
       <div class="ans"><b>HERKEN: YES</b><span>Chevalier's letters, Griffiths's memoir, the 1940 "Report to Our Colleagues" and a Feb 1944 Soviet report all point the same way.</span></div>
       <p>On this page: evidence standard "+ Testimony", the closed unit's position, and key judgment 5.</p>
     </div>
-    <div class="q">
+    <div class="hq">
       <span class="qn">Question 2 · lecture slide 57</span>
       <h3>Was Oppenheimer a spy?</h3>
       <p>Did he knowingly pass atomic secrets to, or cooperate with, Soviet intelligence?</p>
@@ -489,11 +492,16 @@ function table(M){
   const rows=Object.entries(M.m).map(([id,v])=>({id,label:byId[id].label,group:GROUPS[byId[id].group],...v}));
   rows.sort((a,b)=>{const x=a[st.sort],y=b[st.sort]; if(typeof x==="string") return st.dir*x.localeCompare(y); return st.dir*((x??-1)-(y??-1));});
   const th=document.querySelector("#tbl thead"); th.innerHTML="<tr>"+cols.map(([k,l])=>`<th scope="col"><button type="button" data-k="${k}" ${st.sort===k?`aria-sort="${st.dir<0?"descending":"ascending"}"`:""}>${l}${st.sort===k?(st.dir<0?" ↓":" ↑"):""}</button></th>`).join("")+"</tr>";
-  document.querySelector("#tbl tbody").innerHTML=rows.map(r=>`<tr data-id="${r.id}" class="${r.id===st.sel?"sel":""}"><td>${r.label}</td><td>${r.group}</td>${cols.slice(2).map(([k])=>`<td class="num">${k==="k"?r.k:fmt(r[k])}</td>`).join("")}</tr>`).join("");
-  document.getElementById("tblCaption").textContent=`${TIERN[st.tier.slice(-1)]==="Documented"?"Documented ties only":st.tier==="AB"?"Documented ties plus corroborated testimony":"All ties, including Soviet claims"}, ${PERN[st.per]}: ${M.n} actors, ${M.e} ties, density ${M.density.toFixed(3)}. Chokepoints (cut-points in the cooperative network): ${M.arts.map(a=>byId[a].short).join(", ")}. Click a column to sort; click a row to select that actor.`;
+  document.querySelector("#tbl tbody").innerHTML=rows.map(r=>`<tr data-id="${r.id}" class="${r.id===st.sel?"sel":""}"><td>${r.label}${r.id===st.sel?` <button type="button" class="tomap" title="Show ${r.label} on the map">Map ↑</button>`:""}</td><td>${r.group}</td>${cols.slice(2).map(([k])=>`<td class="num">${k==="k"?r.k:fmt(r[k])}</td>`).join("")}</tr>`).join("");
+  document.getElementById("tblCaption").textContent=`${TIERN[st.tier.slice(-1)]==="Documented"?"Documented ties only":st.tier==="AB"?"Documented ties plus corroborated testimony":"All ties, including Soviet claims"}, ${PERN[st.per]}: ${M.n} actors, ${M.e} ties, density ${M.density.toFixed(3)}. Chokepoints (cut-points in the cooperative network): ${M.arts.map(a=>byId[a].short).join(", ")}. Click a column to sort. Hover a row for the profile card; click a row to highlight that actor here and on the map, then use "Map ↑" to jump to it.`;
 }
 document.querySelector("#tbl thead").addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;const k=b.dataset.k; if(st.sort===k) st.dir*=-1; else {st.sort=k; st.dir=(k==="label"||k==="group"||k==="con")?1:-1;} render();});
-document.querySelector("#tbl tbody").addEventListener("click",ev=>{const tr=ev.target.closest("tr");if(tr){st.sel=tr.dataset.id;render();document.getElementById("graph").scrollIntoView({block:"nearest",behavior:"smooth"})}});
+(function(){const tb=document.querySelector("#tbl tbody");
+  tb.addEventListener("click",ev=>{ if(ev.target.closest(".tomap")){document.getElementById("graph").scrollIntoView({block:"center",behavior:"smooth"});return;}
+    const tr=ev.target.closest("tr"); if(tr){const before=tr.getBoundingClientRect().top; st.sel=tr.dataset.id; render();
+      const nr=tb.querySelector(`tr[data-id="${st.sel}"]`); if(nr){const d=nr.getBoundingClientRect().top-before; if(Math.abs(d)>1) window.scrollBy(0,d);} const r=tb.querySelector(`tr[data-id="${st.sel}"]`); if(r) showTip(ev,bioCard(st.sel,false),"bio");}});
+  tb.addEventListener("mousemove",ev=>{const tr=ev.target.closest("tr"); if(tr&&!ev.target.closest(".tomap")) showTip(ev,bioCard(tr.dataset.id,false),"bio"); else hideTip();});
+  tb.addEventListener("mouseleave",hideTip);})();
 document.getElementById("tierSeg").addEventListener("click",ev=>{const b=ev.target.closest("button");if(b){st.tier=b.dataset.v;render()}});
 document.getElementById("perSeg").addEventListener("click",ev=>{const b=ev.target.closest("button");if(b){st.per=b.dataset.v;render()}});
 document.getElementById("metricSel").addEventListener("change",ev=>{st.metric=ev.target.value;st.sort=ev.target.value;st.dir=-1;render()});
