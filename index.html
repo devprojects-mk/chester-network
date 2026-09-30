@@ -13,7 +13,7 @@
   --bg:#f5f6f7; --panel:#fcfcfb; --ink:#14181d; --ink-2:#4a5058; --ink-3:#6f757d; --rule:#d9dde1; --rule-2:#e8ebee;
   --sel:#1d2733; --sel-ink:#ffffff; --hl:#14181d;
   --sci:#2a78d6; --left:#1baf7a; --sov:#eb6834; --usg:#7d8189;
-  --edge:#9aa1a9; --edge-neg:#c3c8cd; --neg:#b3261e;
+  --edge:#9aa1a9; --edge-neg:#c3c8cd; --neg:#b3261e; --flow:#7b2cbf;
   --f-display:"Source Serif 4", Georgia, "Times New Roman", serif;
   --f-body:"Public Sans", "Helvetica Neue", Arial, sans-serif;
   --f-mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
@@ -21,11 +21,11 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#121417; --panel:#1a1a19; --ink:#f2f3f4; --ink-2:#c3c6ca; --ink-3:#979ca3; --rule:#33383e; --rule-2:#262a2f;
   --sel:#e6e9ec; --sel-ink:#121417; --hl:#ffffff;
-  --sci:#3987e5; --left:#199e70; --sov:#d95926; --usg:#9ba0a8; --edge:#5d646c; --edge-neg:#40464d; --neg:#ff8fa3; color-scheme:dark}}
+  --sci:#3987e5; --left:#199e70; --sov:#d95926; --usg:#9ba0a8; --edge:#5d646c; --edge-neg:#40464d; --neg:#ff8fa3; --flow:#b69cff; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#121417; --panel:#1a1a19; --ink:#f2f3f4; --ink-2:#c3c6ca; --ink-3:#979ca3; --rule:#33383e; --rule-2:#262a2f;
   --sel:#e6e9ec; --sel-ink:#121417; --hl:#ffffff;
-  --sci:#3987e5; --left:#199e70; --sov:#d95926; --usg:#9ba0a8; --edge:#5d646c; --edge-neg:#40464d; --neg:#ff8fa3; color-scheme:dark}
+  --sci:#3987e5; --left:#199e70; --sov:#d95926; --usg:#9ba0a8; --edge:#5d646c; --edge-neg:#40464d; --neg:#ff8fa3; --flow:#b69cff; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;padding-inline:20px;padding-block:28px 64px}
 .wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:40px}
@@ -75,6 +75,7 @@ select{font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--rule);
 #graph{display:block;width:100%;min-width:720px;height:auto}
 .legend{display:flex;flex-wrap:wrap;gap:8px 18px;padding:10px 16px 14px;font-size:12.5px;color:var(--ink-2);border-top:1px solid var(--rule-2)}
 .legend span{display:inline-flex;align-items:center;gap:6px}
+.mapnote{padding:0 16px 14px;font-size:13px;color:var(--ink-2);max-width:90ch}
 .sw{width:11px;height:11px;border-radius:50%;display:inline-block}
 .sw.sq{border-radius:2px}
 .ln{width:26px;height:0;border-top:2px solid var(--ink-2);display:inline-block}
@@ -238,7 +239,8 @@ ul.plain{margin:0;padding-left:18px;display:grid;gap:6px;color:var(--ink-2);max-
           <option value="clo">Closeness</option>
         </select></div>
       <div class="ctl"><span class="lab">Overlays</span>
-        <label class="chk"><input type="checkbox" id="pathChk" checked> Trace Oppenheimer → Kurchatov</label>
+        <label class="chk"><input type="checkbox" id="pathChk" checked> Shortest chain of connections, Oppenheimer → Kurchatov</label>
+        <label class="chk"><input type="checkbox" id="flowChk"> Documented intelligence flows</label>
         <label class="chk"><input type="checkbox" id="negChk" checked> Show adversarial &amp; surveillance ties</label>
       </div>
     </div>
@@ -253,8 +255,11 @@ ul.plain{margin:0;padding-left:18px;display:grid;gap:6px;color:var(--ink-2);max-
         <span><i class="ln"></i>Documented</span>
         <span><i class="ln b"></i>Testimony</span>
         <span><i class="ln c"></i>Soviet claim only</span>
+        <span><svg width="30" height="12" aria-hidden="true"><line x1="1" y1="6" x2="29" y2="6" stroke="var(--hl)" stroke-width="4" stroke-opacity=".55" stroke-linecap="round"/></svg>Shortest chain of connections</span>
+        <span><svg width="34" height="12" aria-hidden="true" style="overflow:visible"><line x1="1" y1="6" x2="24" y2="6" stroke="var(--flow)" stroke-width="3.5"/><path d="M23 1 L33 6 L23 11 Z" fill="var(--flow)"/></svg>Intelligence flow (dashed where the content is inferred)</span>
         <span><svg width="30" height="12" aria-hidden="true" style="overflow:visible"><line x1="1" y1="6" x2="21" y2="6" stroke="var(--neg)" stroke-width="2"/><line x1="11" y1="1" x2="11" y2="11" stroke="var(--neg)" stroke-width="2" stroke-linecap="round"/><path d="M20 1.5 L29 6 L20 10.5 Z" fill="var(--neg)"/></svg>Adversarial or surveillance (arrow points at the person watched or targeted)</span>
       </div>
+      <p class="mapnote">The <b>shortest chain of connections</b> counts any friendly tie: family, friendship, work, Party or intelligence. It shows how close Oppenheimer was to Soviet intelligence, not what passed between people. <b>Documented intelligence flows</b> show where information actually went, according to confessions, FBI recordings and Soviet files.</p>
     </div>
     <aside class="inspect" id="inspect" aria-live="polite"></aside>
   </div>
@@ -348,7 +353,7 @@ ul.plain{margin:0;padding-left:18px;display:grid;gap:6px;color:var(--ink-2);max-
     <div><h3>Source–target brokerage</h3><p class="q">Who could move secrets out?</p><p>Betweenness restricted to paths from scientists to Soviet actors, on cooperative ties only. This is the measure closest to the espionage question.</p></div>
     <div><h3>Eigenvector</h3><p class="q">Who is tied to the well-connected?</p><p>Rewards ties to other central actors. It lifts Oppenheimer's student cluster (Weinberg, Lomanitz, Bohm) and the CPUSA core, which is why Army security watched that group.</p></div>
     <div><h3>Burt's constraint</h3><p class="q">Who spans structural holes?</p><p>Low constraint means an actor's contacts are not connected to each other. Oppenheimer's is the lowest in the network, so he alone linked worlds that otherwise did not touch.</p></div>
-    <div><h3>Cut-points and paths</h3><p class="q">Where are the chokepoints?</p><p>Articulation points are nodes whose removal splits the network. In the wartime network (1943–45) Fitin is one: every Western source feeds Moscow through his directorate. Once Sudoplatov's Department S starts pooling reports (1944 by his account, 1945 by Russia's), Moscow has a second route. Shortest paths to Kurchatov show the likely route.</p></div>
+    <div><h3>Cut-points and paths</h3><p class="q">Where are the chokepoints?</p><p>Articulation points are nodes whose removal splits the network. In the wartime network (1943–45) Fitin is one: every Western source feeds Moscow through his directorate. Once Sudoplatov's Department S starts pooling reports (1944 by his account, 1945 by Russia's), Moscow has a second route. Shortest chains to Kurchatov show how close someone was, not what actually flowed; the flow overlay shows that.</p></div>
     <div><h3>Signed ties and balance</h3><p class="q">Why did the brotherhood break?</p><p>Coding ties as positive or negative tests whether a break was structurally predictable, as in the triad above.</p></div>
     <div><h3>Edge-confidence sensitivity</h3><p class="q">How much does one source matter?</p><p>Recompute every measure under different evidence standards. If a conclusion flips when single-source ties are added, the conclusion depends on the source, not on the structure.</p></div>
   </div>
@@ -383,7 +388,7 @@ const GVAR = {SCI:"var(--sci)",LEFT:"var(--left)",SOV:"var(--sov)",USG:"var(--us
 const TIERN = {A:"Documented",B:"Testimony",C:"Soviet claim"};
 const PERN = {all:"all periods","1":"1936–42","2":"1943–45","3":"1946–67"};
 const MN = {deg:"Degree",bet:"Betweenness",eig:"Eigenvector",clo:"Closeness",brk:"Brokerage",con:"Constraint"};
-const st = {tier:"AB", per:"all", metric:"brk", sel:"JRO", path:true, neg:true, sort:"brk", dir:-1};
+const st = {tier:"AB", per:"all", metric:"brk", sel:"JRO", path:true, neg:true, flow:false, sort:"brk", dir:-1};
 try{ const s=JSON.parse(localStorage.getItem("chesterState")||"{}"); Object.assign(st, s); }catch(e){}
 const save=()=>{try{localStorage.setItem("chesterState",JSON.stringify({tier:st.tier,per:st.per,metric:st.metric}))}catch(e){}};
 const key=()=>st.tier+"|"+st.per;
@@ -413,7 +418,21 @@ svg.append("defs").append("marker").attr("id","negArrow").attr("viewBox","0 0 10
 /* who acts on whom: surveillance runs source→target; for hostile ties, the actor is listed where the data order differs */
 const ACTOR={"JRO~EOL":["EOL","JRO"],"JRO~ET":["ET","JRO"],"Strauss~JRO":["Strauss","JRO"],"Robb~JRO":["Robb","JRO"],"Mironov~Zarubin":["Mironov","Zarubin"]};
 function arrowOf(e){ if(e.type==="surveillance") return [e.s,e.t]; if(e.type==="adversarial") return ACTOR[e.s+"~"+e.t]||null; return null; }
-const gE=svg.append("g"), gP=svg.append("g"), gN=svg.append("g");
+svg.select("defs").append("marker").attr("id","flowArrow").attr("viewBox","0 0 10 10").attr("refX",9).attr("refY",5)
+  .attr("markerWidth",11).attr("markerHeight",11).attr("markerUnits","userSpaceOnUse").attr("orient","auto")
+  .append("path").attr("d","M0 0 L10 5 L0 10 Z").style("fill","var(--flow)");
+/* documented intelligence flows: [from, to, inferred?, note] */
+const FLOWS=[
+ ["Fuchs","Gold",0,"Fuchs gave implosion design data to courier Harry Gold (New York 1944; Santa Fe June and Sept 1945). Confirmed by both men's confessions."],
+ ["Greenglass","Gold",0,"Greenglass gave sketches to Gold in Albuquerque, 3 June 1945. Confirmed by both men's confessions."],
+ ["Gold","Yatskov",0,"Gold handed the material to his NKGB handler, Anatoli Yatskov, in New York."],
+ ["Yatskov","Kvasnikov",0,"Passed to Kvasnikov's scientific-technical line at the New York station."],
+ ["Kvasnikov","Fitin",0,"Sent on to Fitin's foreign-intelligence directorate in Moscow."],
+ ["Fitin","Kurchatov",0,"Delivered to Kurchatov, who evaluated it for the Soviet bomb project."],
+ ["Weinberg","Nelson",0,"FBI recording, 29 Mar 1943: 'Joe' (Weinberg) described Rad Lab work to Nelson."],
+ ["Nelson","Zarubin",1,"The FBI watched Nelson meet NKVD chief Zarubin in April 1943. What Nelson passed on is inferred, not recorded."],
+ ["Zarubin","Fitin",1,"Zarubin reported to Fitin; whether Weinberg's information went further is not documented."]];
+const gE=svg.append("g"), gP=svg.append("g"), gF=svg.append("g"), gN=svg.append("g");
 const tip=document.getElementById("tip");
 function showTip(ev,html,cls){tip.className=cls||"";tip.innerHTML=html;tip.hidden=false;
   const w=tip.offsetWidth,h=tip.offsetHeight,vw=window.innerWidth,vh=window.innerHeight;
@@ -471,13 +490,28 @@ function render(){
   nodeSel.select("text").text(d=>d.short).attr("y",d=>r(d.id)+12).attr("font-weight",d=>d.id===st.sel?600:400);
   // path overlay
   gP.selectAll("*").remove();
+  gF.selectAll("*").remove();
+  if(st.flow) FLOWS.forEach(([s,tg,inf,note])=>{ if(!m[s]||!m[tg]) return;
+    const a=byId[s],b=byId[tg],dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy)||1,o1=r(s)+2,o2=r(tg)+3;
+    const x1=a.x+dx/len*o1,y1=a.y+dy/len*o1,x2=b.x-dx/len*o2,y2=b.y-dy/len*o2;
+    let best=null;
+    for(const k of [0.18,-0.18,0.3,-0.3,0.45,-0.45,0.6,-0.6]){ const qx=(x1+x2)/2-dy/len*len*k, qy=(y1+y2)/2+dx/len*len*k; let clr=1e9;
+      for(let tt=0.08;tt<0.95;tt+=0.04){ const px=(1-tt)*(1-tt)*x1+2*(1-tt)*tt*qx+tt*tt*x2, py=(1-tt)*(1-tt)*y1+2*(1-tt)*tt*qy+tt*tt*y2;
+        for(const n of nodes){ if(n.id===s||n.id===tg||!m[n.id]) continue; clr=Math.min(clr,Math.hypot(n.x-px,n.y-py)-r(n.id)); } }
+      if(!best||clr>best.clr+4) best={clr,qx,qy}; if(clr>16) { best={clr,qx,qy}; break; } }
+    const cx=best.qx, cy=best.qy, d=`M${x1},${y1} Q${cx},${cy} ${x2},${y2}`;
+    gF.append("path").attr("d",d).attr("fill","none").attr("stroke","var(--panel)").attr("stroke-width",7).attr("stroke-linecap","round");
+    gF.append("path").attr("d",d).attr("fill","none").attr("stroke","var(--flow)").attr("stroke-width",3.5)
+      .attr("stroke-dasharray",inf?"7 5":null).attr("marker-end","url(#flowArrow)");
+    gF.append("path").attr("d",d).attr("fill","none").attr("stroke","transparent").attr("stroke-width",12)
+      .style("cursor","help").on("mousemove",ev=>showTip(ev,`<b>${byId[s].label} → ${byId[tg].label}</b><br>${inf?"Inferred flow":"Documented flow"}<br><span style="color:var(--ink-3)">${note}</span>`)).on("mouseleave",hideTip);});
   if(st.path && M.paths) M.paths.forEach(pp=>{ const pts=pp.map(id=>[byId[id].x,byId[id].y]);
     gP.append("path").attr("d",d3.line()(pts)).attr("fill","none").attr("stroke","var(--hl)").attr("stroke-width",4).attr("stroke-opacity",.55).attr("stroke-linecap","round").attr("stroke-linejoin","round"); });
   // controls
   document.querySelectorAll("#tierSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===st.tier));
   document.querySelectorAll("#perSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===st.per));
   document.getElementById("metricSel").value=st.metric;
-  document.getElementById("pathChk").checked=st.path; document.getElementById("negChk").checked=st.neg;
+  document.getElementById("pathChk").checked=st.path; document.getElementById("negChk").checked=st.neg; document.getElementById("flowChk").checked=st.flow;
   inspect(M,act); table(M); save();
 }
 function inspect(M,act){
@@ -487,7 +521,7 @@ function inspect(M,act){
   document.getElementById("inspect").innerHTML=`
    ${bioCard(st.sel,true)}
    <div class="mgrid">${["k","deg","bet","brk","eig","con"].map(k=>`<div><span class="k">${k==="k"?"Ties":MN[k]}</span><span class="v">${k==="k"?m.k:fmt(m[k])}</span></div>`).join("")}</div>
-   <div class="pathnote">Shortest cooperative route(s), Oppenheimer → Kurchatov (${TIERN[st.tier.slice(-1)]==="Documented"?"documented only":st.tier==="AB"?"documented + testimony":"with Soviet claims"}, ${PERN[st.per]}):<br><code>${path}</code></div>
+   <div class="pathnote">Shortest chain(s) of connections, Oppenheimer → Kurchatov (any friendly tie; not a flow of intelligence) (${TIERN[st.tier.slice(-1)]==="Documented"?"documented only":st.tier==="AB"?"documented + testimony":"with Soviet claims"}, ${PERN[st.per]}):<br><code>${path}</code></div>
    <h3 style="font-family:var(--f-body);font-size:13px;color:var(--ink-3);font-weight:500;letter-spacing:.06em;text-transform:uppercase">Ties in view (${ties.length})</h3>
    <ul class="ties">${ties.map(e=>{const o=e.s===st.sel?e.t:e.s;return `<li><div class="t"><b>${byId[o].label}</b><span class="tier">${e.type} · ${TIERN[e.tier]}${e.sign<0?" · −":""}</span></div><span class="ev">${e.ev}</span></li>`}).join("")}</ul>`;
 }
@@ -510,6 +544,7 @@ document.getElementById("tierSeg").addEventListener("click",ev=>{const b=ev.targ
 document.getElementById("perSeg").addEventListener("click",ev=>{const b=ev.target.closest("button");if(b){st.per=b.dataset.v;render()}});
 document.getElementById("metricSel").addEventListener("change",ev=>{st.metric=ev.target.value;st.sort=ev.target.value;st.dir=-1;render()});
 document.getElementById("pathChk").addEventListener("change",ev=>{st.path=ev.target.checked;render()});
+document.getElementById("flowChk").addEventListener("change",ev=>{st.flow=ev.target.checked;render()});
 document.getElementById("negChk").addEventListener("change",ev=>{st.neg=ev.target.checked;render()});
 
 /* ---- key judgments (numbers pulled from the computed metrics) ---- */
@@ -520,11 +555,11 @@ const KJ=[
  ["Oppenheimer was the structural center of every community in the case.","High",
   `On documented ties plus testimony he holds ${AB.JRO.k} of the network's ties (degree ${f2(AB.JRO.deg)}), the highest betweenness (${f2(AB.JRO.bet)}) and the lowest Burt constraint (${f2(AB.JRO.con)}). He was the strongest link between the lab, the Berkeley left and later his accusers. That position explains both the Soviet interest and Army CIC's suspicion. Part of this centrality is an artifact of sources centered on him.`],
  ["The documented channels to Moscow ran near Oppenheimer, not through him.","Moderate",
-  `The spying took place in 1943–45, so this test uses the wartime network. There the top go-betweens from scientists to Soviet intelligence are Nelson (${f2(WAR.Nelson.brk)}), Zarubin (${f2(WAR.Zarubin.brk)}) and Fitin (${f2(WAR.Fitin.brk)}). Oppenheimer's shortest routes to Kurchatov run through other people to Nelson: ${D.metrics["AB|2"].paths.map(p=>p.map(id=>SHORT[id]).join(" → ")).join("; ")}. The confessed spy's route, Fuchs → Gold → Yatskov → Kvasnikov → Fitin, was a courier line entirely outside Oppenheimer's personal circle.`],
+  `The spying took place in 1943–45, so this test uses the wartime network. There the top go-betweens from scientists to Soviet intelligence are Nelson (${f2(WAR.Nelson.brk)}), Zarubin (${f2(WAR.Zarubin.brk)}) and Fitin (${f2(WAR.Fitin.brk)}). Oppenheimer's shortest chains of connection to Kurchatov, counting any friendly tie, run through other people to Nelson: ${D.metrics["AB|2"].paths.map(p=>p.map(id=>SHORT[id]).join(" → ")).join("; ")}. The confessed spy's route, Fuchs → Gold → Yatskov → Kvasnikov → Fitin, was a courier line entirely outside Oppenheimer's personal circle.`],
  ["Steve Nelson was the Berkeley channel, and what reached it came from Oppenheimer's student.","Moderate",
   `Nelson's wartime brokerage (${f2(WAR.Nelson.brk)}) far exceeds Chevalier's (${f2(WAR.Chevalier.brk)}). The FBI recorded Weinberg describing Rad Lab work to him and watched him meet Zarubin. Oppenheimer knew Nelson socially and admitted the visits, but no record shows him passing anything through Nelson. The Chevalier–Eltenton–Ivanov chain reached Oppenheimer and stopped there, because he refused.`],
  [`The spy reading depends on ${D.edges.filter(e=>e.tier==="C").length} single-source Soviet ties, and those ties push the documented channels aside.`,"Moderate",
-  `In the wartime network, adding the Merkulov-letter, February 1944 and Sudoplatov-memoir claims lifts Oppenheimer from ${f2(WAR.JRO.brk)} to ${f2(WARC.JRO.brk)} and Kheifets from ${f2(WAR.Kheifets.brk)} to ${f2(WARC.Kheifets.brk)}, and shrinks his route to Kurchatov to ${D.metrics['ABC|2'].path.map(id=>SHORT[id]).join(' → ')}. At the same time Nelson falls from ${f2(WAR.Nelson.brk)} to ${f2(WARC.Nelson.brk)}, Zarubin from ${f2(WAR.Zarubin.brk)} to ${f2(WARC.Zarubin.brk)}, and the courier Gold from ${f2(WAR.Gold.brk)} to ${f2(WARC.Gold.brk)}. A reading that pushes both documented channels, the Party route and the confessed spy's courier line, to the edge of the network is hard to reconcile with the rest of the record. This is consistent with Herken's "no" to Question 2.`],
+  `In the wartime network, adding the Merkulov-letter, February 1944 and Sudoplatov-memoir claims lifts Oppenheimer from ${f2(WAR.JRO.brk)} to ${f2(WARC.JRO.brk)} and Kheifets from ${f2(WAR.Kheifets.brk)} to ${f2(WARC.Kheifets.brk)}, and shrinks his chain of connection to Kurchatov to ${D.metrics['ABC|2'].path.map(id=>SHORT[id]).join(' → ')}. At the same time Nelson falls from ${f2(WAR.Nelson.brk)} to ${f2(WARC.Nelson.brk)}, Zarubin from ${f2(WAR.Zarubin.brk)} to ${f2(WARC.Zarubin.brk)}, and the courier Gold from ${f2(WAR.Gold.brk)} to ${f2(WARC.Gold.brk)}. A reading that pushes both documented channels, the Party route and the confessed spy's courier line, to the edge of the network is hard to reconcile with the rest of the record. This is consistent with Herken's "no" to Question 2.`],
  ["Question 1 depends on testimony. If the testimony is accepted, the closed unit becomes a major bridge.","Moderate",
   `Using only documented ties, the Berkeley closed unit is a dead end (betweenness ${f2(A.Unit?A.Unit.bet:0)}). Adding Chevalier's and Griffiths's accounts makes it one of the top ${unitRank} bridges in the network (${f2(AB.Unit.bet)}), linking Oppenheimer's faculty circle to the CPUSA. Whether that tie counts as membership is a question of definition that structure cannot settle.`],
  ["The break within the brotherhood was structurally predictable.","Low",
